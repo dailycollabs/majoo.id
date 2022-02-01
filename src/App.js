@@ -1,24 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { todoStore, create } from "./store";
+import AppLoader from "./components/loader";
+import TodoApp from "./container";
 
-function App() {
+
+
+
+const App = () => {
+  const dispatch = useDispatch();
+  const { todoList: { loading } } = useSelector(state => state)
+  /**
+   * INITIALIZING FETCH API
+   */
+  useEffect(() => {
+    fetch('https://virtserver.swaggerhub.com/hanabyan/todo/1.0.0/to-do-list')
+      .then(data => data.json())
+      .then(result => dispatch(create({ loading: false, data: result })))
+  }, []);
+
+  /**
+   * GIVE LOADING STATE
+   * TO RENDER LOADING SCREEN
+   * WHILE FETCHING DATA
+   */
+  if (loading) { return <AppLoader /> };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <TodoApp />
   );
 }
 
